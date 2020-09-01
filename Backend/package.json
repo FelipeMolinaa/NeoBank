@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --ignore-watch node_modules index.ts"
+    "dev": "ts-node-dev --ignore-watch node_modules index.ts",
+    "knex:down": "knex migrate:down alteracoesTabela.ts",
+    "knex:up": "knex migrate:up alteracoesTabela.ts"
   },
   "keywords": [],
   "author": "",
