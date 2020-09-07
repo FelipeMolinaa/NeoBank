@@ -18,9 +18,9 @@ class UserControllers{
     }
 
     async create(request: Request, response: Response){
-        const {nome, telefone, cpf, email, cep} = request.body
+        const {nome, telefone, cpf, email, cep, senha} = request.body
         
-        const usuario = new Usuario(nome, telefone, cpf, email, cep)
+        const usuario = new Usuario(nome, telefone, cpf, email, cep, senha)
 
         usuario.createUsuarioDB().then(mensagem => {
             console.log(mensagem)
@@ -29,8 +29,8 @@ class UserControllers{
     }
 
     async update(request: Request, response: Response){
-        const {id, nome, telefone, cpf, email, cep} = request.body
-        const usuario = new Usuario(nome, telefone, cpf, email, cep)
+        const {id, nome, telefone, cpf, email, cep, senha} = request.body
+        const usuario = new Usuario(nome, telefone, cpf, email, cep, senha)
 
         usuario.updateUsuariosDB(id).then(usuario =>{
             return response.json(usuario)

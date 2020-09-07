@@ -2,25 +2,28 @@ import knex from '../../database/connection'
 
 export default class Usuario{
     private nome: string;
+    private senha: string
     private telefone: string;
     private cpf: string;
     private email: string;
     private cep: string;
 
-    constructor(nome: string, telefone: string,CPF: string,email: string, CEP: string){
+    constructor(nome: string, telefone: string,CPF: string,email: string, CEP: string, senha: string){
         this.nome = nome
         this.telefone = telefone
         this.cpf = CPF
         this.email = email
         this.cep = CEP
+        this.senha = senha
     }
-
-
-
 
     public async createUsuarioDB(){
         try{
             await knex('usuarios').insert(this)
+            const status = {
+                mensagem: 'Sucesso ao cadastrar o usuario no banco de dados'
+            }
+            return status
         }catch(err){
             const status = {
                 mensagem: 'Ocorreu um erro ao cadastrar o usuario no banco de dados',
@@ -29,21 +32,16 @@ export default class Usuario{
             return status
         }
 
-        const status = {
-            mensagem: 'Sucesso ao cadastrar o usuario no banco de dados'
-        }
-        return status
+        
     }
 
     public static async getUsuarioDB(id: number){
-        let usuario;
         try{
-            usuario = await knex('usuarios').where('id', id)
+            const usuario = await knex('usuarios').where('id', id)
+            return usuario
         }catch(err){
             return err
         }
-
-        return usuario
     }
 
     public static async getUsuariosDB(){
@@ -105,5 +103,9 @@ export default class Usuario{
 
     public get CEP() : string {
         return this.cep
+    }
+
+    public get Senha() : string {
+        return this.senha
     }
 }
