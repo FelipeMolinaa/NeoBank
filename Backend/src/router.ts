@@ -12,7 +12,7 @@ const contaOperacoesController = new ContaOperacoesController()
 
 const routes = express.Router()
 
-routes.get("/user/:id", userController.index)
+routes.get("/user/:cpf", userController.index)
 routes.get("/user", userController.show)
 routes.post("/user", userController.create)
 routes.put("/user", userController.update)
@@ -20,8 +20,8 @@ routes.delete("/user/:id", userController.delete)
 
 routes.get('/conta/:id', contaController.index)
 routes.post('/conta', contaController.create)
-routes.put('/conta/codigo/', contaController.updateCodigo)
-routes.put('/conta/limite/', contaController.updateLimite)
+routes.put('/conta/codigo/', contaController.updateCodigos)
+routes.put('/conta/limite/', contaController.update)
 routes.delete('/conta/:id', contaController.delete)
 
 routes.put('/conta/tranferencia', contaOperacoesController.transferencia)

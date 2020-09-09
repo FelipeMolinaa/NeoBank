@@ -1,48 +1,67 @@
 import {Request, Response} from 'express'
-import Usuario from '../model/Usuario/Usuario'
+import UsuarioDAO from '../DAOController/UsuarioDAO'
+import bcrypt from '../utils/incriptador'
+import { UsuarioCompleto } from '../model/Usuario/UsuarioInterfaces'
 
 class UserControllers{
     async index(request: Request, response: Response){
-        const {id} = request.params
+        const {cpf} = request.params
 
-        Usuario.getUsuarioDB(Number(id)).then(usuario =>{
-            return response.json(usuario)
-        })
+        const Usuario = await UsuarioDAO.getUsuarioByCPF_DAO(cpf)  
+
+        return response.json(Usuario)
     }
 
     async show(request: Request, response: Response){
+        const Usuarios = await UsuarioDAO.getUsuarios_DAO()  
 
-        Usuario.getUsuariosDB().then(Usuarios =>{
-            return response.json(Usuarios)
-        })
+        return response.json(Usuarios)
     }
 
     async create(request: Request, response: Response){
         const {nome, telefone, cpf, email, cep, senha} = request.body
-        
-        const usuario = new Usuario(nome, telefone, cpf, email, cep, senha)
 
-        usuario.createUsuarioDB().then(mensagem => {
-            console.log(mensagem)
-            return response.json(mensagem)
-        })   
+        const UsuarioExiste = await UsuarioDAO.getUsuarioByCPF_DAO(cpf)
+        if(UsuarioExiste !== undefined){
+            return response.json('Ja existe um usuario cadastrado com esse CPF')
+        }
+
+        const Usuario: UsuarioCompleto = {
+            nome,
+            telefone,
+            cpf,
+            email,
+            cep,
+            senha: await bcrypt.encriptaSenha(senha)
+        }
+
+        const usuario = await UsuarioDAO.createUsuario_DAO(Usuario)  
+
+        return response.json(usuario)
     }
 
     async update(request: Request, response: Response){
-        const {id, nome, telefone, cpf, email, cep, senha} = request.body
-        const usuario = new Usuario(nome, telefone, cpf, email, cep, senha)
+        const {id, telefone, email, cep, senha} = request.body
+        
+        const usuario = {
+            id,
+            telefone,
+            email,
+            cep,
+            senha
+        }
 
-        usuario.updateUsuariosDB(id).then(usuario =>{
-            return response.json(usuario)
-        })
+        const Usuario = await UsuarioDAO.updateUsuario_DAO(usuario)  
+
+        return response.json(Usuario)
     }
 
     async delete(request: Request, response: Response){
         const {id} = request.params
 
-        Usuario.deleteUsuarioDB(Number(id)).then(usuario =>{
-            return response.json(usuario)
-        })
+        const retorno = await UsuarioDAO.deleteUsuario_DAO(id)
+
+        return response.json(retorno)
     }
 }
 

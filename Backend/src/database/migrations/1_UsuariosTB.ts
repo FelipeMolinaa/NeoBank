@@ -8,7 +8,7 @@ export async function up(knex: Knex){
         table.string('cep').notNullable();
         table.string('email').notNullable();
         table.string('cpf').notNullable();
-        table.string('senha', 4).notNullable();
+        table.string('senha').notNullable();
     })
 }
 

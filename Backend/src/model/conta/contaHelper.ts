@@ -1,44 +1,52 @@
-import knex from '../../database/connection'
-const quantidadeCaracteres = 10000;
-export default class HelperConta{
+import contaDAO from "../../DAOController/contaDAO"
+import bcrypt from '../../utils/incriptador'
 
-    public static generateDataExpedicao(){
+export default class ContaHelper{
+
+    public static async geraNumeroConta(quantidadeNumero: number){
+        let Numeros: string[] = []
+        let numeroControle = '1';
+        for(let i = 1; i <= quantidadeNumero; i ++){
+            numeroControle += '0'
+        }
+
+        while(true){
+            let parteNumero = Math.trunc(Math.random() * Number(numeroControle))
+            if(parteNumero >= 1000){
+                Numeros.push(String(parteNumero))
+                if(Numeros.length == 4){
+                    const numeroFormatado = 
+                        `${Numeros[0]}-${Numeros[1]}-${Numeros[2]}-${Numeros[3]}`
+                    const existeDB = await contaDAO.getContaByNumeroConta_DB(numeroFormatado)
+
+                    if(existeDB){
+                        return String(numeroFormatado)
+                    }
+                }
+            }
+        }   
+    }
+
+    public static async geraSenhaConta(quantidadeNumero: number){
+        let numeroControle = '1';
+        for(let i = 1; i <= quantidadeNumero; i ++){
+            numeroControle += '0'
+        }
+
+        while(true){
+            const senha = Math.trunc(Math.random() * Number(numeroControle))
+            if(senha >= 100){
+                const senhaCriptografada = await bcrypt.encriptaSenha(String(senha))
+                return String(senhaCriptografada)
+            }
+        }
+    }
+
+    public static async getDataFormatada(){
         const data = new Date()
-        let dataFormatada;
-        const anoFormatado = data.getFullYear().toString().substr(-2)
-        if(data.getMonth().toString().length == 1){
-            dataFormatada = "0" + (data.getMonth() + 1)
-        }else{
-            dataFormatada = (data.getMonth() + 1)
-        }
-        const dataString = `${dataFormatada}/${anoFormatado}`
-        return dataString
-    }
-
-    public static generateCodigoSeguranca(){
-        while(true){
-            const codigo = Math.trunc(Math.random() * quantidadeCaracteres).toString()
-            if(codigo.length == 3){
-                return Number(codigo)
-            }
-        }
-    }
-
-    public static async generateNumeroConta(){
-        while(true){
-            const primeriosDigitos = Math.trunc(Math.random() * quantidadeCaracteres).toString()
-            const ultimosDigitos = Math.trunc(Math.random() * quantidadeCaracteres).toString()
-            if(primeriosDigitos.length !== 4 || ultimosDigitos.length !== 4){
-                continue;
-            }
-            const numeroConta = primeriosDigitos + "-" + ultimosDigitos
-    
-            const resultado = await knex('contas').where('numeroConta', numeroConta).first()
-
-            if(resultado === undefined){
-                const numeroConta = (primeriosDigitos + "-" + ultimosDigitos)
-                return numeroConta
-            }
-        }
+        const mes = data.getMonth() + 1
+        const mesFormatado = (String(mes).length == 2) ? (mes) : ('0' + mes)
+        const ano = String(data.getFullYear())
+        return `${mesFormatado}/${ano.slice(-2)}`
     }
 }
