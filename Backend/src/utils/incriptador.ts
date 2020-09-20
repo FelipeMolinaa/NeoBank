@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 
-export default class UsuarioHelper{
+export default class Encriptador{
     public static async encriptaSenha(senha: string){
         const salt = bcrypt.genSaltSync(10);
         const senhaCriptografada = bcrypt.hashSync(senha, salt)

@@ -13,20 +13,30 @@ class ContaController{
         return response.json(responseDB)
     }
 
+    async show(request: Request, response: Response){
+        const {idUsuario} = request.params
+
+        const responseDB = await contaDAO.getContaByIdUsuario_DAO(Number(idUsuario))
+
+        return response.json(responseDB)
+    }
+
     async create(request: Request, response: Response){
-        const {idUsuario} = request.body
+        const {idUsuario, nomeConta} = request.body
         const usuario = await UsuarioDAO.getUsuarioByID_DAO(idUsuario)
         if(usuario == undefined){
             return response.json({
                 message: 'Ocorreu um erro... O usuario no qual quer criar a conta, não existe'
             })
         }
+
         const conta: ContaCreate = {
             idUsuario,
+            nomeConta,
             numeroConta: await ContaHelper.geraNumeroConta(4),
             codigoSeguranca: await ContaHelper.geraSenhaConta(3),
-            dataExpedicao: await ContaHelper.getDataFormatada(),
-            limite: 300,
+            validade: await ContaHelper.getDataFormatada(),
+            limite: 100000,
             saldo: 0
         }
 
@@ -62,7 +72,7 @@ class ContaController{
     async delete(request: Request, response: Response){
         const {id} = request.params
 
-        const
+        const responseDB = await contaDAO.deleteConta_DAO(id)
 
         return response.json(responseDB)
     }

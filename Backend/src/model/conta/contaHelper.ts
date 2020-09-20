@@ -36,8 +36,7 @@ export default class ContaHelper{
         while(true){
             const senha = Math.trunc(Math.random() * Number(numeroControle))
             if(senha >= 100){
-                const senhaCriptografada = await bcrypt.encriptaSenha(String(senha))
-                return String(senhaCriptografada)
+                return String(senha)
             }
         }
     }
@@ -46,7 +45,7 @@ export default class ContaHelper{
         const data = new Date()
         const mes = data.getMonth() + 1
         const mesFormatado = (String(mes).length == 2) ? (mes) : ('0' + mes)
-        const ano = String(data.getFullYear())
-        return `${mesFormatado}/${ano.slice(-2)}`
+        const ano = String(data.getFullYear()+7)
+        return `${mesFormatado}/${(ano.slice(-2))}`
     }
 }
